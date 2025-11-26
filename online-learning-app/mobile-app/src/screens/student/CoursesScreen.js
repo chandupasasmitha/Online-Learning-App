@@ -1,4 +1,3 @@
-// Courses screen
 import React, { useState, useEffect } from "react";
 import {
   View,
@@ -8,25 +7,35 @@ import {
   ActivityIndicator,
   RefreshControl,
   TextInput,
+  TouchableOpacity,
+  Modal,
 } from "react-native";
 import { courseAPI } from "../../api";
 import CourseCard from "../../components/CourseCard";
-import { MaterialCommunityIcons as Icon } from "@expo/vector-icons";
+import CustomHeader from "../../components/CustomHeader";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 const CoursesScreen = ({ navigation }) => {
   const [courses, setCourses] = useState([]);
+  const [filteredCourses, setFilteredCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [showSearchModal, setShowSearchModal] = useState(false);
 
   useEffect(() => {
     fetchCourses();
   }, []);
 
+  useEffect(() => {
+    filterCourses();
+  }, [searchQuery, courses]);
+
   const fetchCourses = async () => {
     try {
-      const response = await courseAPI.getAllCourses({ search: searchQuery });
+      const response = await courseAPI.getAllCourses();
       setCourses(response.data.data.courses);
+      setFilteredCourses(response.data.data.courses);
     } catch (error) {
       console.error("Error fetching courses:", error);
     } finally {
@@ -35,13 +44,23 @@ const CoursesScreen = ({ navigation }) => {
     }
   };
 
-  const onRefresh = () => {
-    setRefreshing(true);
-    fetchCourses();
+  const filterCourses = () => {
+    if (!searchQuery.trim()) {
+      setFilteredCourses(courses);
+      return;
+    }
+
+    const filtered = courses.filter(
+      (course) =>
+        course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        course.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        course.category.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    setFilteredCourses(filtered);
   };
 
-  const handleSearch = () => {
-    setLoading(true);
+  const onRefresh = () => {
+    setRefreshing(true);
     fetchCourses();
   };
 
@@ -55,20 +74,36 @@ const CoursesScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.searchContainer}>
-        <Icon name="magnify" size={20} color="#666" style={styles.searchIcon} />
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Search courses..."
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-          onSubmitEditing={handleSearch}
-          returnKeyType="search"
-        />
+      <CustomHeader
+        title="Explore Courses"
+        subtitle={`${courses.length} courses available`}
+        showSearch
+        onSearchPress={() => setShowSearchModal(true)}
+        showNotification
+        navigation={navigation}
+      />
+
+      {/* Quick Stats */}
+      <View style={styles.statsContainer}>
+        <View style={styles.statCard}>
+          <Icon name="book-open-variant" size={24} color="#007AFF" />
+          <Text style={styles.statNumber}>{courses.length}</Text>
+          <Text style={styles.statLabel}>Total Courses</Text>
+        </View>
+        <View style={styles.statCard}>
+          <Icon name="fire" size={24} color="#FF9500" />
+          <Text style={styles.statNumber}>New</Text>
+          <Text style={styles.statLabel}>Trending</Text>
+        </View>
+        <View style={styles.statCard}>
+          <Icon name="star" size={24} color="#FFD700" />
+          <Text style={styles.statNumber}>Top</Text>
+          <Text style={styles.statLabel}>Rated</Text>
+        </View>
       </View>
 
       <FlatList
-        data={courses}
+        data={filteredCourses}
         keyExtractor={(item) => item._id}
         renderItem={({ item }) => (
           <CourseCard
@@ -89,6 +124,58 @@ const CoursesScreen = ({ navigation }) => {
           </View>
         }
       />
+
+      {/* Search Modal */}
+      <Modal
+        visible={showSearchModal}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setShowSearchModal(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <View style={styles.searchHeader}>
+              <Text style={styles.searchTitle}>Search Courses</Text>
+              <TouchableOpacity onPress={() => setShowSearchModal(false)}>
+                <Icon name="close" size={24} color="#333" />
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.searchInputContainer}>
+              <Icon
+                name="magnify"
+                size={20}
+                color="#666"
+                style={styles.searchIcon}
+              />
+              <TextInput
+                style={styles.searchInput}
+                placeholder="Search by title, description, or category..."
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+                autoFocus
+              />
+              {searchQuery.length > 0 && (
+                <TouchableOpacity onPress={() => setSearchQuery("")}>
+                  <Icon name="close-circle" size={20} color="#999" />
+                </TouchableOpacity>
+              )}
+            </View>
+
+            <Text style={styles.resultText}>
+              {filteredCourses.length}{" "}
+              {filteredCourses.length === 1 ? "course" : "courses"} found
+            </Text>
+
+            <TouchableOpacity
+              style={styles.doneButton}
+              onPress={() => setShowSearchModal(false)}
+            >
+              <Text style={styles.doneButtonText}>Done</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -102,39 +189,102 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: "#F5F5F5",
   },
-  searchContainer: {
+  statsContainer: {
     flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#FFF",
-    margin: 15,
     paddingHorizontal: 15,
-    borderRadius: 10,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
+    paddingVertical: 15,
+    backgroundColor: "#FFF",
+    marginBottom: 5,
   },
-  searchIcon: {
-    marginRight: 10,
-  },
-  searchInput: {
+  statCard: {
     flex: 1,
-    paddingVertical: 12,
-    fontSize: 16,
+    alignItems: "center",
+    paddingVertical: 15,
+    marginHorizontal: 5,
+    backgroundColor: "#F8F9FA",
+    borderRadius: 12,
+  },
+  statNumber: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#333",
+    marginTop: 8,
+  },
+  statLabel: {
+    fontSize: 12,
+    color: "#666",
+    marginTop: 4,
   },
   listContent: {
     padding: 15,
   },
   emptyContainer: {
     alignItems: "center",
-    marginTop: 50,
+    marginTop: 80,
   },
   emptyText: {
     fontSize: 16,
     color: "#999",
     marginTop: 10,
+  },
+  modalContainer: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "flex-end",
+  },
+  modalContent: {
+    backgroundColor: "#FFF",
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    padding: 20,
+    paddingBottom: 40,
+    minHeight: 250,
+  },
+  searchHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  searchTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#333",
+  },
+  searchInputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#F5F5F5",
+    borderRadius: 12,
+    paddingHorizontal: 15,
+    marginBottom: 15,
+  },
+  searchIcon: {
+    marginRight: 10,
+  },
+  searchInput: {
+    flex: 1,
+    paddingVertical: 15,
+    fontSize: 16,
+    color: "#333",
+  },
+  resultText: {
+    fontSize: 14,
+    color: "#666",
+    marginBottom: 20,
+  },
+  doneButton: {
+    backgroundColor: "#007AFF",
+    paddingVertical: 15,
+    borderRadius: 12,
+    alignItems: "center",
+  },
+  doneButtonText: {
+    color: "#FFF",
+    fontSize: 16,
+    fontWeight: "600",
   },
 });
 

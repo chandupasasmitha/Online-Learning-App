@@ -1,7 +1,7 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { MaterialCommunityIcons as Icon } from "@expo/vector-icons";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 import CoursesScreen from "../screens/student/CoursesScreen";
 import CourseDetailsScreen from "../screens/student/CourseDetailsScreen";
@@ -12,76 +12,32 @@ import ProfileScreen from "../screens/student/ProfileScreen";
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
-// Courses Stack (with navigation to details)
+// Courses Stack
 const CoursesStack = () => (
-  <Stack.Navigator
-    screenOptions={{
-      headerStyle: { backgroundColor: "#007AFF" },
-      headerTintColor: "#fff",
-      headerTitleStyle: { fontWeight: "bold" },
-    }}
-  >
-    <Stack.Screen
-      name="CoursesList"
-      component={CoursesScreen}
-      options={{ title: "All Courses" }}
-    />
-    <Stack.Screen
-      name="CourseDetails"
-      component={CourseDetailsScreen}
-      options={{ title: "Course Details" }}
-    />
+  <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Screen name="CoursesList" component={CoursesScreen} />
+    <Stack.Screen name="CourseDetails" component={CourseDetailsScreen} />
   </Stack.Navigator>
 );
 
-// Enrolled Courses with Header
+// Enrolled Courses Stack
 const EnrolledStack = () => (
-  <Stack.Navigator
-    screenOptions={{
-      headerStyle: { backgroundColor: "#007AFF" },
-      headerTintColor: "#fff",
-      headerTitleStyle: { fontWeight: "bold" },
-    }}
-  >
-    <Stack.Screen
-      name="EnrolledList"
-      component={EnrolledCoursesScreen}
-      options={{ title: "My Courses" }}
-    />
+  <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Screen name="EnrolledList" component={EnrolledCoursesScreen} />
   </Stack.Navigator>
 );
 
-// GPT Chat with Header
+// GPT Stack
 const GPTStack = () => (
-  <Stack.Navigator
-    screenOptions={{
-      headerStyle: { backgroundColor: "#007AFF" },
-      headerTintColor: "#fff",
-      headerTitleStyle: { fontWeight: "bold" },
-    }}
-  >
-    <Stack.Screen
-      name="GPTChat"
-      component={GPTChatScreen}
-      options={{ title: "AI Assistant" }}
-    />
+  <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Screen name="GPTChat" component={GPTChatScreen} />
   </Stack.Navigator>
 );
 
-// Profile with Header
+// Profile Stack
 const ProfileStack = () => (
-  <Stack.Navigator
-    screenOptions={{
-      headerStyle: { backgroundColor: "#007AFF" },
-      headerTintColor: "#fff",
-      headerTitleStyle: { fontWeight: "bold" },
-    }}
-  >
-    <Stack.Screen
-      name="ProfileScreen"
-      component={ProfileScreen}
-      options={{ title: "Profile" }}
-    />
+  <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
   </Stack.Navigator>
 );
 
@@ -96,41 +52,70 @@ const StudentStack = () => {
           if (route.name === "Courses") {
             iconName = focused ? "book-open" : "book-open-outline";
           } else if (route.name === "My Courses") {
-            iconName = focused ? "bookmark" : "bookmark-outline";
+            iconName = focused
+              ? "bookmark-multiple"
+              : "bookmark-multiple-outline";
           } else if (route.name === "AI Assistant") {
             iconName = focused ? "robot" : "robot-outline";
           } else if (route.name === "Profile") {
-            iconName = focused ? "account" : "account-outline";
+            iconName = focused ? "account-circle" : "account-circle-outline";
           }
 
           return <Icon name={iconName} size={size} color={color} />;
         },
         tabBarActiveTintColor: "#007AFF",
-        tabBarInactiveTintColor: "gray",
+        tabBarInactiveTintColor: "#8E8E93",
         headerShown: false,
         tabBarStyle: {
-          height: 60,
-          paddingBottom: 5,
-          paddingTop: 5,
-          backgroundColor: "#fff",
-          borderTopWidth: 1,
-          borderTopColor: "#e0e0e0",
+          backgroundColor: "#FFFFFF",
+          borderTopWidth: 0,
           elevation: 8,
           shadowColor: "#000",
           shadowOffset: { width: 0, height: -2 },
           shadowOpacity: 0.1,
-          shadowRadius: 3,
+          shadowRadius: 8,
+          paddingBottom: 8,
+          paddingTop: 8,
+          height: 65,
         },
         tabBarLabelStyle: {
-          fontSize: 12,
+          fontSize: 11,
           fontWeight: "600",
+          marginBottom: 4,
+        },
+        tabBarItemStyle: {
+          paddingVertical: 4,
         },
       })}
     >
-      <Tab.Screen name="Courses" component={CoursesStack} />
-      <Tab.Screen name="My Courses" component={EnrolledStack} />
-      <Tab.Screen name="AI Assistant" component={GPTStack} />
-      <Tab.Screen name="Profile" component={ProfileStack} />
+      <Tab.Screen
+        name="Courses"
+        component={CoursesStack}
+        options={{
+          tabBarLabel: "Explore",
+        }}
+      />
+      <Tab.Screen
+        name="My Courses"
+        component={EnrolledStack}
+        options={{
+          tabBarLabel: "My Courses",
+        }}
+      />
+      <Tab.Screen
+        name="AI Assistant"
+        component={GPTStack}
+        options={{
+          tabBarLabel: "AI Helper",
+        }}
+      />
+      <Tab.Screen
+        name="Profile"
+        component={ProfileStack}
+        options={{
+          tabBarLabel: "Profile",
+        }}
+      />
     </Tab.Navigator>
   );
 };

@@ -10,7 +10,8 @@ import {
 import { useFocusEffect } from "@react-navigation/native";
 import { enrollmentAPI } from "../../api";
 import CourseCard from "../../components/CourseCard";
-import { MaterialCommunityIcons as Icon } from "@expo/vector-icons";
+import CustomHeader from "../../components/CustomHeader";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 const EnrolledCoursesScreen = ({ navigation }) => {
   const [enrollments, setEnrollments] = useState([]);
@@ -40,6 +41,12 @@ const EnrolledCoursesScreen = ({ navigation }) => {
     fetchEnrollments();
   };
 
+  const calculateTotalProgress = () => {
+    if (enrollments.length === 0) return 0;
+    const total = enrollments.reduce((sum, e) => sum + (e.progress || 0), 0);
+    return Math.round(total / enrollments.length);
+  };
+
   if (loading && !refreshing) {
     return (
       <View style={styles.loadingContainer}>
@@ -50,29 +57,63 @@ const EnrolledCoursesScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.headerInfo}>
-        <Text style={styles.headerText}>
-          {enrollments.length} {enrollments.length === 1 ? "Course" : "Courses"}
-        </Text>
-      </View>
+      <CustomHeader
+        title="My Learning"
+        subtitle={`${enrollments.length} ${
+          enrollments.length === 1 ? "course" : "courses"
+        } enrolled`}
+        showNotification
+        navigation={navigation}
+      />
+
+      {/* Progress Stats */}
+      {enrollments.length > 0 && (
+        <View style={styles.progressContainer}>
+          <View style={styles.progressCard}>
+            <View style={styles.progressHeader}>
+              <Text style={styles.progressTitle}>Your Progress</Text>
+              <Text style={styles.progressPercentage}>
+                {calculateTotalProgress()}%
+              </Text>
+            </View>
+            <View style={styles.progressBarContainer}>
+              <View
+                style={[
+                  styles.progressBar,
+                  { width: `${calculateTotalProgress()}%` },
+                ]}
+              />
+            </View>
+            <Text style={styles.progressText}>
+              Keep learning! You're doing great 🎉
+            </Text>
+          </View>
+        </View>
+      )}
 
       <FlatList
         data={enrollments}
         keyExtractor={(item) => item._id}
         renderItem={({ item }) => (
           <View>
-            <CourseCard
-              course={item.course}
-              onPress={() => {
-                // Navigate to course details if needed
-              }}
-            />
+            <CourseCard course={item.course} onPress={() => {}} />
             <View style={styles.enrollmentInfo}>
-              <Text style={styles.enrollmentDate}>
-                Enrolled: {new Date(item.enrolledAt).toLocaleDateString()}
-              </Text>
-              <View style={[styles.statusBadge, getStatusColor(item.status)]}>
-                <Text style={styles.statusText}>{item.status}</Text>
+              <View style={styles.enrollmentDetails}>
+                <Icon name="calendar" size={14} color="#666" />
+                <Text style={styles.enrollmentDate}>
+                  {" "}
+                  Enrolled: {new Date(item.enrolledAt).toLocaleDateString()}
+                </Text>
+              </View>
+              <View style={styles.statusRow}>
+                <View style={[styles.statusBadge, getStatusColor(item.status)]}>
+                  <Text style={styles.statusText}>{item.status}</Text>
+                </View>
+                {item.progress !== undefined && (
+                  <Text style={styles.progressBadge}>
+                    {item.progress}% complete
+                  </Text>
+                )}
               </View>
             </View>
           </View>
@@ -83,10 +124,11 @@ const EnrolledCoursesScreen = ({ navigation }) => {
         }
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
-            <Icon name="book-remove-outline" size={64} color="#CCC" />
+            <Icon name="book-remove-outline" size={80} color="#DDD" />
             <Text style={styles.emptyText}>No enrolled courses yet</Text>
             <Text style={styles.emptySubtext}>
-              Explore courses and start learning!
+              Start exploring and enroll in courses to begin your learning
+              journey!
             </Text>
           </View>
         }
@@ -98,13 +140,13 @@ const EnrolledCoursesScreen = ({ navigation }) => {
 const getStatusColor = (status) => {
   switch (status) {
     case "active":
-      return { backgroundColor: "#4CAF50" };
+      return { backgroundColor: "#34C759" };
     case "completed":
-      return { backgroundColor: "#2196F3" };
+      return { backgroundColor: "#007AFF" };
     case "dropped":
-      return { backgroundColor: "#F44336" };
+      return { backgroundColor: "#FF3B30" };
     default:
-      return { backgroundColor: "#9E9E9E" };
+      return { backgroundColor: "#8E8E93" };
   }
 };
 
@@ -119,16 +161,48 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#F5F5F5",
   },
-  headerInfo: {
+  progressContainer: {
     backgroundColor: "#FFF",
-    padding: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: "#E0E0E0",
+    padding: 20,
+    marginBottom: 5,
   },
-  headerText: {
+  progressCard: {
+    backgroundColor: "#F8F9FA",
+    padding: 20,
+    borderRadius: 15,
+  },
+  progressHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 15,
+  },
+  progressTitle: {
     fontSize: 16,
     fontWeight: "600",
     color: "#333",
+  },
+  progressPercentage: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#007AFF",
+  },
+  progressBarContainer: {
+    height: 8,
+    backgroundColor: "#E5E5EA",
+    borderRadius: 4,
+    overflow: "hidden",
+    marginBottom: 10,
+  },
+  progressBar: {
+    height: "100%",
+    backgroundColor: "#007AFF",
+    borderRadius: 4,
+  },
+  progressText: {
+    fontSize: 13,
+    color: "#666",
+    textAlign: "center",
   },
   listContent: {
     padding: 15,
@@ -141,14 +215,23 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     paddingHorizontal: 15,
   },
+  enrollmentDetails: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
   enrollmentDate: {
     fontSize: 12,
     color: "#666",
+  },
+  statusRow: {
+    flexDirection: "row",
+    alignItems: "center",
   },
   statusBadge: {
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 12,
+    marginRight: 8,
   },
   statusText: {
     color: "#FFF",
@@ -156,22 +239,28 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     textTransform: "capitalize",
   },
+  progressBadge: {
+    fontSize: 11,
+    color: "#007AFF",
+    fontWeight: "600",
+  },
   emptyContainer: {
     alignItems: "center",
-    marginTop: 80,
+    marginTop: 60,
     paddingHorizontal: 40,
   },
   emptyText: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: "600",
     color: "#999",
-    marginTop: 15,
+    marginTop: 20,
+    marginBottom: 10,
   },
   emptySubtext: {
     fontSize: 14,
     color: "#BBB",
-    marginTop: 8,
     textAlign: "center",
+    lineHeight: 22,
   },
 });
 

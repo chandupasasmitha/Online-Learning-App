@@ -1,4 +1,3 @@
-// GPT chat screen
 import React, { useState } from "react";
 import {
   View,
@@ -12,19 +11,33 @@ import {
   Platform,
 } from "react-native";
 import { gptAPI } from "../../api";
-import { MaterialCommunityIcons as Icon } from "@expo/vector-icons";
+import CustomHeader from "../../components/CustomHeader";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { LinearGradient } from "expo-linear-gradient";
 
-const GPTChatScreen = () => {
+const GPTChatScreen = ({ navigation }) => {
   const [prompt, setPrompt] = useState("");
   const [loading, setLoading] = useState(false);
   const [recommendations, setRecommendations] = useState([]);
   const [error, setError] = useState("");
 
   const quickPrompts = [
-    "I want to be a software engineer",
-    "I want to learn web development",
-    "I want to become a data scientist",
-    "I want to learn mobile app development",
+    {
+      icon: "laptop",
+      text: "I want to be a software engineer",
+      color: "#007AFF",
+    },
+    { icon: "web", text: "I want to learn web development", color: "#5856D6" },
+    {
+      icon: "chart-line",
+      text: "I want to become a data scientist",
+      color: "#FF9500",
+    },
+    {
+      icon: "cellphone",
+      text: "I want to learn mobile app development",
+      color: "#34C759",
+    },
   ];
 
   const handleGetRecommendations = async (customPrompt) => {
@@ -46,7 +59,6 @@ const GPTChatScreen = () => {
       if (data.recommendations && data.recommendations.length > 0) {
         setRecommendations(data.recommendations);
       } else if (data.rawResponse) {
-        // Handle text-only response
         setRecommendations([
           {
             title: "AI Recommendations",
@@ -74,43 +86,62 @@ const GPTChatScreen = () => {
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={styles.container}
-      keyboardVerticalOffset={100}
+      keyboardVerticalOffset={0}
     >
-      <View style={styles.header}>
-        <Icon name="robot" size={40} color="#007AFF" />
-        <Text style={styles.headerTitle}>AI Course Assistant</Text>
-        <Text style={styles.headerSubtitle}>
-          Ask me what courses you should take!
-        </Text>
-      </View>
+      <CustomHeader
+        title="AI Course Assistant"
+        subtitle="Get personalized recommendations"
+        navigation={navigation}
+      />
 
       <ScrollView
         style={styles.content}
         contentContainerStyle={styles.scrollContent}
       >
+        {/* AI Avatar */}
+        <View style={styles.aiAvatarContainer}>
+          <LinearGradient
+            colors={["#667eea", "#764ba2"]}
+            style={styles.aiAvatar}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+          >
+            <Icon name="robot" size={50} color="#FFF" />
+          </LinearGradient>
+          <Text style={styles.aiGreeting}>
+            Hi! I'm your AI learning assistant. Ask me what you want to learn!
+          </Text>
+        </View>
+
         {/* Quick Prompts */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Quick Prompts:</Text>
+          <Text style={styles.sectionTitle}>Quick Questions:</Text>
           {quickPrompts.map((qp, index) => (
             <TouchableOpacity
               key={index}
               style={styles.quickPromptButton}
-              onPress={() => handleQuickPrompt(qp)}
+              onPress={() => handleQuickPrompt(qp.text)}
             >
-              <Icon name="lightning-bolt" size={16} color="#007AFF" />
-              <Text style={styles.quickPromptText}>{qp}</Text>
+              <View
+                style={[styles.quickPromptIcon, { backgroundColor: qp.color }]}
+              >
+                <Icon name={qp.icon} size={20} color="#FFF" />
+              </View>
+              <Text style={styles.quickPromptText}>{qp.text}</Text>
+              <Icon name="chevron-right" size={20} color="#CCC" />
             </TouchableOpacity>
           ))}
         </View>
 
-        {/* Recommendations */}
+        {/* Loading */}
         {loading && (
           <View style={styles.loadingContainer}>
             <ActivityIndicator size="large" color="#007AFF" />
-            <Text style={styles.loadingText}>Getting recommendations...</Text>
+            <Text style={styles.loadingText}>AI is thinking...</Text>
           </View>
         )}
 
+        {/* Error */}
         {error && (
           <View style={styles.errorContainer}>
             <Icon name="alert-circle" size={24} color="#FF3B30" />
@@ -118,21 +149,32 @@ const GPTChatScreen = () => {
           </View>
         )}
 
+        {/* Recommendations */}
         {recommendations.length > 0 && !loading && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Recommendations:</Text>
+            <View style={styles.recommendationsHeader}>
+              <Icon name="lightbulb-on" size={24} color="#FFD700" />
+              <Text style={styles.sectionTitle}>Recommendations for you:</Text>
+            </View>
             {recommendations.map((rec, index) => (
               <View key={index} style={styles.recommendationCard}>
-                <Text style={styles.recommendationTitle}>{rec.title}</Text>
-                <Text style={styles.recommendationReason}>{rec.reason}</Text>
-                {rec.course && (
-                  <View style={styles.courseInfo}>
-                    <Icon name="check-circle" size={16} color="#4CAF50" />
-                    <Text style={styles.availableText}>
-                      Available in our catalog
-                    </Text>
-                  </View>
-                )}
+                <View style={styles.recommendationNumber}>
+                  <Text style={styles.recommendationNumberText}>
+                    {index + 1}
+                  </Text>
+                </View>
+                <View style={styles.recommendationContent}>
+                  <Text style={styles.recommendationTitle}>{rec.title}</Text>
+                  <Text style={styles.recommendationReason}>{rec.reason}</Text>
+                  {rec.course && (
+                    <View style={styles.courseAvailable}>
+                      <Icon name="check-circle" size={16} color="#34C759" />
+                      <Text style={styles.availableText}>
+                        Available in our catalog
+                      </Text>
+                    </View>
+                  )}
+                </View>
               </View>
             ))}
           </View>
@@ -141,20 +183,43 @@ const GPTChatScreen = () => {
 
       {/* Input Section */}
       <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.input}
-          placeholder="Ask me anything... (e.g., I want to be a software engineer)"
-          value={prompt}
-          onChangeText={setPrompt}
-          multiline
-          maxLength={200}
-        />
+        <View style={styles.inputWrapper}>
+          <Icon
+            name="message-text-outline"
+            size={20}
+            color="#666"
+            style={styles.inputIcon}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Ask me anything..."
+            placeholderTextColor="#999"
+            value={prompt}
+            onChangeText={setPrompt}
+            multiline
+            maxLength={200}
+          />
+        </View>
         <TouchableOpacity
-          style={[styles.sendButton, loading && styles.sendButtonDisabled]}
+          style={[
+            styles.sendButton,
+            (!prompt.trim() || loading) && styles.sendButtonDisabled,
+          ]}
           onPress={() => handleGetRecommendations()}
-          disabled={loading}
+          disabled={!prompt.trim() || loading}
         >
-          <Icon name="send" size={24} color="#FFF" />
+          <LinearGradient
+            colors={
+              !prompt.trim() || loading
+                ? ["#CCC", "#999"]
+                : ["#007AFF", "#0051D5"]
+            }
+            style={styles.sendGradient}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+          >
+            <Icon name="send" size={20} color="#FFF" />
+          </LinearGradient>
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
@@ -166,142 +231,195 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#F5F5F5",
   },
-  header: {
-    backgroundColor: "#FFF",
-    padding: 20,
-    paddingTop: 60,
-    alignItems: "center",
-    borderBottomWidth: 1,
-    borderBottomColor: "#E0E0E0",
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#333",
-    marginTop: 10,
-  },
-  headerSubtitle: {
-    fontSize: 14,
-    color: "#666",
-    marginTop: 5,
-  },
   content: {
     flex: 1,
   },
   scrollContent: {
-    padding: 15,
+    padding: 20,
+    paddingBottom: 100,
+  },
+  aiAvatarContainer: {
+    alignItems: "center",
+    marginBottom: 30,
+    marginTop: 20,
+  },
+  aiAvatar: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 15,
+  },
+  aiGreeting: {
+    fontSize: 16,
+    color: "#666",
+    textAlign: "center",
+    paddingHorizontal: 20,
+    lineHeight: 24,
   },
   section: {
-    marginBottom: 20,
+    marginBottom: 25,
   },
   sectionTitle: {
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: "700",
     color: "#333",
-    marginBottom: 10,
+    marginBottom: 15,
+    marginLeft: 5,
   },
   quickPromptButton: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#FFF",
-    padding: 12,
-    borderRadius: 8,
-    marginBottom: 8,
-    borderWidth: 1,
-    borderColor: "#E0E0E0",
+    padding: 15,
+    borderRadius: 12,
+    marginBottom: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 2,
+  },
+  quickPromptIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 15,
   },
   quickPromptText: {
-    marginLeft: 10,
+    flex: 1,
     fontSize: 14,
-    color: "#007AFF",
+    color: "#333",
+    fontWeight: "500",
   },
   loadingContainer: {
     alignItems: "center",
-    padding: 30,
+    padding: 40,
   },
   loadingText: {
-    marginTop: 10,
+    marginTop: 15,
     fontSize: 14,
     color: "#666",
   },
   errorContainer: {
     backgroundColor: "#FFE5E5",
-    padding: 15,
-    borderRadius: 8,
+    padding: 20,
+    borderRadius: 12,
     flexDirection: "row",
     alignItems: "center",
   },
   errorText: {
-    marginLeft: 10,
+    marginLeft: 15,
     fontSize: 14,
     color: "#FF3B30",
     flex: 1,
+    lineHeight: 20,
+  },
+  recommendationsHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 15,
   },
   recommendationCard: {
+    flexDirection: "row",
     backgroundColor: "#FFF",
     padding: 15,
-    borderRadius: 8,
-    marginBottom: 10,
-    borderLeftWidth: 4,
-    borderLeftColor: "#007AFF",
+    borderRadius: 12,
+    marginBottom: 12,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
     elevation: 2,
+  },
+  recommendationNumber: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: "#007AFF",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 12,
+  },
+  recommendationNumberText: {
+    color: "#FFF",
+    fontWeight: "bold",
+    fontSize: 14,
+  },
+  recommendationContent: {
+    flex: 1,
   },
   recommendationTitle: {
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: "700",
     color: "#333",
-    marginBottom: 8,
+    marginBottom: 6,
   },
   recommendationReason: {
     fontSize: 14,
     color: "#666",
     lineHeight: 20,
+    marginBottom: 8,
   },
-  courseInfo: {
+  courseAvailable: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: 10,
-    paddingTop: 10,
+    paddingTop: 8,
     borderTopWidth: 1,
     borderTopColor: "#F0F0F0",
   },
   availableText: {
-    marginLeft: 5,
+    marginLeft: 6,
     fontSize: 13,
-    color: "#4CAF50",
-    fontWeight: "500",
+    color: "#34C759",
+    fontWeight: "600",
   },
   inputContainer: {
     flexDirection: "row",
     padding: 15,
+    paddingBottom: 30,
     backgroundColor: "#FFF",
     borderTopWidth: 1,
-    borderTopColor: "#E0E0E0",
+    borderTopColor: "#E5E5EA",
+    alignItems: "flex-end",
   },
-  input: {
+  inputWrapper: {
     flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
     backgroundColor: "#F5F5F5",
     borderRadius: 20,
     paddingHorizontal: 15,
-    paddingVertical: 10,
-    fontSize: 15,
-    maxHeight: 100,
+    marginRight: 10,
+    minHeight: 44,
+  },
+  inputIcon: {
     marginRight: 10,
   },
+  input: {
+    flex: 1,
+    fontSize: 15,
+    color: "#333",
+    paddingVertical: 10,
+    maxHeight: 100,
+  },
   sendButton: {
-    backgroundColor: "#007AFF",
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    justifyContent: "center",
-    alignItems: "center",
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    overflow: "hidden",
   },
   sendButtonDisabled: {
     opacity: 0.5,
+  },
+  sendGradient: {
+    width: "100%",
+    height: "100%",
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 
