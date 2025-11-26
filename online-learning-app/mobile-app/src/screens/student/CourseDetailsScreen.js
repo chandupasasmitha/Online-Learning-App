@@ -259,23 +259,23 @@ const getStatusColor = (status) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F4F8FB",
+    backgroundColor: "#F5F5F5",
   },
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#F4F8FB",
+    backgroundColor: "#F5F5F5",
   },
   errorContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#F4F8FB",
+    backgroundColor: "#F5F5F5",
   },
   errorText: {
     fontSize: 18,
-    color: "#5499C7",
+    color: "#666666",
     marginTop: 15,
   },
   content: {
@@ -286,23 +286,23 @@ const styles = StyleSheet.create({
     padding: 20,
     alignItems: "center",
     borderBottomWidth: 1,
-    borderBottomColor: "#D6EAF8",
+    borderBottomColor: "#E0E0E0",
   },
   courseThumbnail: {
     width: 100,
     height: 100,
     borderRadius: 50,
-    backgroundColor: "#EBF5FB",
+    backgroundColor: "#F5F5F5",
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 15,
     borderWidth: 3,
-    borderColor: "#D6EAF8",
+    borderColor: "#E0E0E0",
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#154360",
+    color: "#333333",
     marginBottom: 12,
     textAlign: "center",
   },
@@ -340,7 +340,7 @@ const styles = StyleSheet.create({
     padding: 20,
     marginTop: 10,
     borderBottomWidth: 1,
-    borderBottomColor: "#D6EAF8",
+    borderBottomColor: "#E0E0E0",
   },
   infoRow: {
     flexDirection: "row",
@@ -350,7 +350,7 @@ const styles = StyleSheet.create({
   infoText: {
     marginLeft: 10,
     fontSize: 15,
-    color: "#154360",
+    color: "#333333",
   },
   enrollmentStatusCard: {
     backgroundColor: "#E8F8F0",
@@ -368,7 +368,7 @@ const styles = StyleSheet.create({
   enrollmentStatusTitle: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#154360",
+    color: "#333333",
     marginLeft: 10,
   },
   enrollmentDetails: {
@@ -380,7 +380,7 @@ const styles = StyleSheet.create({
   },
   enrollmentLabel: {
     fontSize: 12,
-    color: "#5499C7",
+    color: "#666666",
     marginBottom: 5,
   },
   statusPill: {
@@ -396,11 +396,11 @@ const styles = StyleSheet.create({
   progressValue: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#154360",
+    color: "#333333",
   },
   dateValue: {
     fontSize: 12,
-    color: "#154360",
+    color: "#333333",
     fontWeight: "500",
   },
   section: {
@@ -408,22 +408,22 @@ const styles = StyleSheet.create({
     padding: 20,
     marginTop: 10,
     borderBottomWidth: 1,
-    borderBottomColor: "#D6EAF8",
+    borderBottomColor: "#E0E0E0",
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#154360",
+    color: "#333333",
     marginBottom: 10,
   },
   description: {
     fontSize: 15,
-    color: "#5499C7",
+    color: "#666666",
     lineHeight: 22,
   },
   content: {
     fontSize: 15,
-    color: "#5499C7",
+    color: "#666666",
     lineHeight: 22,
   },
   buttonContainer: {
@@ -443,7 +443,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   goToCoursesButton: {
-    backgroundColor: "#5DADE2",
+    backgroundColor: "#7B68EE",
   },
 });
 

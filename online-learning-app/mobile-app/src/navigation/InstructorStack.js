@@ -1,8 +1,9 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { MaterialCommunityIcons as Icon } from "@expo/vector-icons";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
+import InstructorHomeScreen from "../screens/instructor/InstructorHomeScreen";
 import MyCoursesScreen from "../screens/instructor/MyCoursesScreen";
 import AddCourseScreen from "../screens/instructor/AddCourseScreen";
 import EditCourseScreen from "../screens/instructor/EditCourseScreen";
@@ -12,52 +13,27 @@ import ProfileScreen from "../screens/student/ProfileScreen";
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
+// Home Stack
+const HomeStack = () => (
+  <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Screen name="InstructorHomeMain" component={InstructorHomeScreen} />
+  </Stack.Navigator>
+);
+
 // Courses Stack with nested screens
 const CoursesStack = () => (
-  <Stack.Navigator
-    screenOptions={{
-      headerStyle: { backgroundColor: "#007AFF" },
-      headerTintColor: "#fff",
-      headerTitleStyle: { fontWeight: "bold" },
-    }}
-  >
-    <Stack.Screen
-      name="MyCoursesList"
-      component={MyCoursesScreen}
-      options={{ title: "My Courses" }}
-    />
-    <Stack.Screen
-      name="AddCourse"
-      component={AddCourseScreen}
-      options={{ title: "Create Course" }}
-    />
-    <Stack.Screen
-      name="EditCourse"
-      component={EditCourseScreen}
-      options={{ title: "Edit Course" }}
-    />
-    <Stack.Screen
-      name="CourseStudents"
-      component={CourseStudentsScreen}
-      options={{ title: "Enrolled Students" }}
-    />
+  <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Screen name="MyCoursesList" component={MyCoursesScreen} />
+    <Stack.Screen name="AddCourse" component={AddCourseScreen} />
+    <Stack.Screen name="EditCourse" component={EditCourseScreen} />
+    <Stack.Screen name="CourseStudents" component={CourseStudentsScreen} />
   </Stack.Navigator>
 );
 
 // Profile Stack
 const ProfileStack = () => (
-  <Stack.Navigator
-    screenOptions={{
-      headerStyle: { backgroundColor: "#007AFF" },
-      headerTintColor: "#fff",
-      headerTitleStyle: { fontWeight: "bold" },
-    }}
-  >
-    <Stack.Screen
-      name="ProfileScreen"
-      component={ProfileScreen}
-      options={{ title: "Profile" }}
-    />
+  <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
   </Stack.Navigator>
 );
 
@@ -69,36 +45,43 @@ const InstructorStack = () => {
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
 
-          if (route.name === "My Courses") {
-            iconName = focused ? "book-multiple" : "book-multiple-outline";
+          if (route.name === "Home") {
+            iconName = focused ? "home" : "home-outline";
+          } else if (route.name === "My Courses") {
+            iconName = focused ? "bookshelf" : "bookshelf-outline";
           } else if (route.name === "Profile") {
-            iconName = focused ? "account" : "account-outline";
+            iconName = focused ? "account-circle" : "account-circle-outline";
           }
 
           return <Icon name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor: "#007AFF",
-        tabBarInactiveTintColor: "gray",
+        tabBarActiveTintColor: "#5DADE2",
+        tabBarInactiveTintColor: "#85C1E9",
         headerShown: false,
         tabBarStyle: {
-          height: 60,
-          paddingBottom: 5,
-          paddingTop: 5,
-          backgroundColor: "#fff",
+          backgroundColor: "#EBF5FB",
           borderTopWidth: 1,
-          borderTopColor: "#e0e0e0",
-          elevation: 8,
+          borderTopColor: "#AED6F1",
+          paddingBottom: 8,
+          paddingTop: 8,
+          height: 65,
           shadowColor: "#000",
           shadowOffset: { width: 0, height: -2 },
-          shadowOpacity: 0.1,
-          shadowRadius: 3,
+          shadowOpacity: 0.05,
+          shadowRadius: 8,
+          elevation: 8,
         },
         tabBarLabelStyle: {
-          fontSize: 12,
+          fontSize: 11,
           fontWeight: "600",
+          marginBottom: 4,
+        },
+        tabBarItemStyle: {
+          paddingVertical: 4,
         },
       })}
     >
+      <Tab.Screen name="Home" component={HomeStack} />
       <Tab.Screen name="My Courses" component={CoursesStack} />
       <Tab.Screen name="Profile" component={ProfileStack} />
     </Tab.Navigator>

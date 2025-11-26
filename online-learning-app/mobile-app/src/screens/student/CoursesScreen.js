@@ -210,13 +210,13 @@ const CoursesScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F4F8FB",
+    backgroundColor: "#F5F5F5",
   },
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#F4F8FB",
+    backgroundColor: "#F5F5F5",
   },
   statsContainer: {
     flexDirection: "row",
@@ -225,27 +225,27 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     marginBottom: 5,
     borderBottomWidth: 1,
-    borderBottomColor: "#D6EAF8",
+    borderBottomColor: "#E0E0E0",
   },
   statCard: {
     flex: 1,
     alignItems: "center",
     paddingVertical: 15,
     marginHorizontal: 5,
-    backgroundColor: "#EBF5FB",
+    backgroundColor: "#F9F9F9",
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: "#D6EAF8",
+    borderColor: "#E0E0E0",
   },
   statNumber: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#154360",
+    color: "#333333",
     marginTop: 8,
   },
   statLabel: {
     fontSize: 12,
-    color: "#5499C7",
+    color: "#666666",
     marginTop: 4,
   },
   listContent: {
@@ -257,7 +257,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 16,
-    color: "#5499C7",
+    color: "#666666",
     marginTop: 10,
   },
   modalContainer: {
@@ -282,17 +282,17 @@ const styles = StyleSheet.create({
   searchTitle: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "#154360",
+    color: "#333333",
   },
   searchInputContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#EBF5FB",
+    backgroundColor: "#F5F5F5",
     borderRadius: 12,
     paddingHorizontal: 15,
     marginBottom: 15,
     borderWidth: 1,
-    borderColor: "#D6EAF8",
+    borderColor: "#E0E0E0",
   },
   searchIcon: {
     marginRight: 10,
@@ -301,15 +301,15 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 15,
     fontSize: 16,
-    color: "#154360",
+    color: "#333333",
   },
   resultText: {
     fontSize: 14,
-    color: "#5499C7",
+    color: "#666666",
     marginBottom: 20,
   },
   doneButton: {
-    backgroundColor: "#5DADE2",
+    backgroundColor: "#7B68EE",
     paddingVertical: 15,
     borderRadius: 12,
     alignItems: "center",

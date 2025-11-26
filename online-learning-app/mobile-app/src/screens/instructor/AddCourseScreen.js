@@ -1,4 +1,3 @@
-// Add course screen
 import React, { useState } from "react";
 import {
   View,
@@ -13,6 +12,7 @@ import {
 import { courseAPI } from "../../api";
 import InputField from "../../components/InputField";
 import Button from "../../components/Button";
+import SimpleHeader from "../../components/SimpleHeader";
 
 const AddCourseScreen = ({ navigation }) => {
   const [formData, setFormData] = useState({
@@ -43,7 +43,7 @@ const AddCourseScreen = ({ navigation }) => {
     setLoading(true);
     try {
       await courseAPI.createCourse(formData);
-      Alert.alert("Success", "Course created successfully", [
+      Alert.alert("Success", "Course created successfully! 🎉", [
         { text: "OK", onPress: () => navigation.goBack() },
       ]);
     } catch (error) {
@@ -57,100 +57,110 @@ const AddCourseScreen = ({ navigation }) => {
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={styles.container}
-    >
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        <InputField
-          label="Course Title *"
-          placeholder="Enter course title"
-          value={formData.title}
-          onChangeText={(value) => handleChange("title", value)}
-        />
+    <View style={styles.container}>
+      <SimpleHeader
+        title="Create New Course"
+        onBackPress={() => navigation.goBack()}
+      />
 
-        <InputField
-          label="Description *"
-          placeholder="Enter course description"
-          value={formData.description}
-          onChangeText={(value) => handleChange("description", value)}
-          multiline
-          numberOfLines={4}
-          style={styles.textArea}
-        />
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={styles.keyboardView}
+      >
+        <ScrollView contentContainerStyle={styles.scrollContent}>
+          <InputField
+            label="Course Title *"
+            placeholder="Enter course title"
+            value={formData.title}
+            onChangeText={(value) => handleChange("title", value)}
+          />
 
-        <InputField
-          label="Course Content *"
-          placeholder="Enter course content/curriculum"
-          value={formData.content}
-          onChangeText={(value) => handleChange("content", value)}
-          multiline
-          numberOfLines={6}
-          style={styles.textArea}
-        />
+          <InputField
+            label="Description *"
+            placeholder="Enter course description"
+            value={formData.description}
+            onChangeText={(value) => handleChange("description", value)}
+            multiline
+            numberOfLines={4}
+            style={styles.textArea}
+          />
 
-        <InputField
-          label="Category"
-          placeholder="e.g., Programming, Design, Business"
-          value={formData.category}
-          onChangeText={(value) => handleChange("category", value)}
-        />
+          <InputField
+            label="Course Content *"
+            placeholder="Enter course content/curriculum"
+            value={formData.content}
+            onChangeText={(value) => handleChange("content", value)}
+            multiline
+            numberOfLines={6}
+            style={styles.textArea}
+          />
 
-        <View style={styles.fieldContainer}>
-          <Text style={styles.label}>Level *</Text>
-          <View style={styles.levelContainer}>
-            {levels.map((level) => (
-              <TouchableOpacity
-                key={level}
-                style={[
-                  styles.levelButton,
-                  formData.level === level && styles.levelButtonActive,
-                ]}
-                onPress={() => handleChange("level", level)}
-              >
-                <Text
+          <InputField
+            label="Category"
+            placeholder="e.g., Programming, Design, Business"
+            value={formData.category}
+            onChangeText={(value) => handleChange("category", value)}
+          />
+
+          <View style={styles.fieldContainer}>
+            <Text style={styles.label}>Level *</Text>
+            <View style={styles.levelContainer}>
+              {levels.map((level) => (
+                <TouchableOpacity
+                  key={level}
                   style={[
-                    styles.levelButtonText,
-                    formData.level === level && styles.levelButtonTextActive,
+                    styles.levelButton,
+                    formData.level === level && styles.levelButtonActive,
                   ]}
+                  onPress={() => handleChange("level", level)}
                 >
-                  {level}
-                </Text>
-              </TouchableOpacity>
-            ))}
+                  <Text
+                    style={[
+                      styles.levelButtonText,
+                      formData.level === level && styles.levelButtonTextActive,
+                    ]}
+                  >
+                    {level}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
           </View>
-        </View>
 
-        <InputField
-          label="Duration"
-          placeholder="e.g., 4 weeks, Self-paced"
-          value={formData.duration}
-          onChangeText={(value) => handleChange("duration", value)}
-        />
+          <InputField
+            label="Duration"
+            placeholder="e.g., 4 weeks, Self-paced"
+            value={formData.duration}
+            onChangeText={(value) => handleChange("duration", value)}
+          />
 
-        <InputField
-          label="Price"
-          placeholder="Enter price (0 for free)"
-          value={formData.price}
-          onChangeText={(value) => handleChange("price", value)}
-          keyboardType="numeric"
-        />
+          <InputField
+            label="Price"
+            placeholder="Enter price (0 for free)"
+            value={formData.price}
+            onChangeText={(value) => handleChange("price", value)}
+            keyboardType="numeric"
+          />
 
-        <Button
-          title="Create Course"
-          onPress={handleSubmit}
-          loading={loading}
-          style={styles.submitButton}
-        />
-      </ScrollView>
-    </KeyboardAvoidingView>
+          <Button
+            title="Create Course"
+            onPress={handleSubmit}
+            loading={loading}
+            style={styles.submitButton}
+          />
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFF",
+    backgroundColor: "#F4F8FB",
+  },
+  keyboardView: {
+    flex: 1,
   },
   scrollContent: {
     padding: 20,
@@ -166,7 +176,7 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#333",
+    color: "#154360",
     marginBottom: 8,
   },
   levelContainer: {
@@ -178,19 +188,19 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "#E0E0E0",
+    borderColor: "#D6EAF8",
     alignItems: "center",
     marginHorizontal: 4,
-    backgroundColor: "#F5F5F5",
+    backgroundColor: "#EBF5FB",
   },
   levelButtonActive: {
-    backgroundColor: "#007AFF",
-    borderColor: "#007AFF",
+    backgroundColor: "#5DADE2",
+    borderColor: "#5DADE2",
   },
   levelButtonText: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#666",
+    color: "#5499C7",
   },
   levelButtonTextActive: {
     color: "#FFF",

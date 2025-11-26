@@ -1,4 +1,3 @@
-// My courses screen
 import React, { useState, useCallback } from "react";
 import {
   View,
@@ -13,7 +12,8 @@ import {
 import { useFocusEffect } from "@react-navigation/native";
 import { courseAPI } from "../../api";
 import CourseCard from "../../components/CourseCard";
-import { MaterialCommunityIcons as Icon } from "@expo/vector-icons";
+import CustomHeader from "../../components/CustomHeader";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 const MyCoursesScreen = ({ navigation }) => {
   const [courses, setCourses] = useState([]);
@@ -47,7 +47,7 @@ const MyCoursesScreen = ({ navigation }) => {
   const handleDeleteCourse = (courseId) => {
     Alert.alert(
       "Delete Course",
-      "Are you sure you want to delete this course?",
+      "Are you sure you want to delete this course? This action cannot be undone.",
       [
         { text: "Cancel", style: "cancel" },
         {
@@ -73,7 +73,7 @@ const MyCoursesScreen = ({ navigation }) => {
         style={styles.actionButton}
         onPress={() => navigation.navigate("EditCourse", { course })}
       >
-        <Icon name="pencil" size={20} color="#007AFF" />
+        <Icon name="pencil" size={18} color="#5DADE2" />
         <Text style={styles.actionText}>Edit</Text>
       </TouchableOpacity>
 
@@ -83,16 +83,18 @@ const MyCoursesScreen = ({ navigation }) => {
           navigation.navigate("CourseStudents", { courseId: course._id })
         }
       >
-        <Icon name="account-group" size={20} color="#4CAF50" />
-        <Text style={styles.actionText}>Students</Text>
+        <Icon name="account-group" size={18} color="#52C787" />
+        <Text style={[styles.actionText, { color: "#52C787" }]}>
+          Students ({course.enrollmentCount || 0})
+        </Text>
       </TouchableOpacity>
 
       <TouchableOpacity
         style={styles.actionButton}
         onPress={() => handleDeleteCourse(course._id)}
       >
-        <Icon name="delete" size={20} color="#FF3B30" />
-        <Text style={[styles.actionText, { color: "#FF3B30" }]}>Delete</Text>
+        <Icon name="delete" size={18} color="#FF6B6B" />
+        <Text style={[styles.actionText, { color: "#FF6B6B" }]}>Delete</Text>
       </TouchableOpacity>
     </View>
   );
@@ -100,13 +102,22 @@ const MyCoursesScreen = ({ navigation }) => {
   if (loading && !refreshing) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#007AFF" />
+        <ActivityIndicator size="large" color="#5DADE2" />
       </View>
     );
   }
 
   return (
     <View style={styles.container}>
+      <CustomHeader
+        title="My Courses"
+        subtitle={`${courses.length} ${
+          courses.length === 1 ? "course" : "courses"
+        } created`}
+        showNotification
+        navigation={navigation}
+      />
+
       <FlatList
         data={courses}
         keyExtractor={(item) => item._id}
@@ -118,13 +129,25 @@ const MyCoursesScreen = ({ navigation }) => {
         )}
         contentContainerStyle={styles.listContent}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor="#5DADE2"
+            colors={["#5DADE2"]}
+          />
         }
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
-            <Icon name="book-plus-outline" size={64} color="#CCC" />
+            <Icon name="book-plus-outline" size={80} color="#D6EAF8" />
             <Text style={styles.emptyText}>No courses yet</Text>
             <Text style={styles.emptySubtext}>Create your first course!</Text>
+            <TouchableOpacity
+              style={styles.createButton}
+              onPress={() => navigation.navigate("AddCourse")}
+            >
+              <Icon name="plus" size={20} color="#FFF" />
+              <Text style={styles.createButtonText}>Create Course</Text>
+            </TouchableOpacity>
           </View>
         }
       />
@@ -148,6 +171,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: "#F5F5F5",
   },
   listContent: {
     padding: 15,
@@ -156,15 +180,18 @@ const styles = StyleSheet.create({
   actionsContainer: {
     flexDirection: "row",
     justifyContent: "space-around",
-    backgroundColor: "#FFF",
-    padding: 10,
+    backgroundColor: "#FFFFFF",
+    padding: 12,
     marginHorizontal: 15,
     marginBottom: 15,
     marginTop: -10,
     borderBottomLeftRadius: 12,
     borderBottomRightRadius: 12,
     borderTopWidth: 1,
-    borderTopColor: "#F0F0F0",
+    borderTopColor: "#F5F5F5",
+    borderWidth: 1,
+    borderColor: "#E0E0E0",
+    borderTopWidth: 0,
   },
   actionButton: {
     flexDirection: "row",
@@ -173,31 +200,46 @@ const styles = StyleSheet.create({
   },
   actionText: {
     marginLeft: 5,
-    fontSize: 14,
-    fontWeight: "500",
-    color: "#007AFF",
+    fontSize: 13,
+    fontWeight: "600",
+    color: "#7B68EE",
   },
   emptyContainer: {
     alignItems: "center",
-    marginTop: 80,
+    paddingTop: 60,
     paddingHorizontal: 40,
   },
   emptyText: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: "600",
-    color: "#999",
-    marginTop: 15,
+    color: "#333333",
+    marginTop: 20,
   },
   emptySubtext: {
     fontSize: 14,
-    color: "#BBB",
+    color: "#666666",
     marginTop: 8,
+  },
+  createButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#7B68EE",
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 10,
+    marginTop: 20,
+  },
+  createButtonText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "600",
+    marginLeft: 8,
   },
   fab: {
     position: "absolute",
     right: 20,
     bottom: 20,
-    backgroundColor: "#007AFF",
+    backgroundColor: "#7B68EE",
     width: 60,
     height: 60,
     borderRadius: 30,
