@@ -8,6 +8,7 @@ import HomeScreen from "../screens/student/HomeScreen";
 import CoursesScreen from "../screens/student/CoursesScreen";
 import CourseDetailsScreen from "../screens/student/CourseDetailsScreen";
 import EnrolledCoursesScreen from "../screens/student/EnrolledCoursesScreen";
+import GPTChatScreen from "../screens/student/GPTChatScreen";
 import ProfileScreen from "../screens/student/ProfileScreen";
 
 const Stack = createStackNavigator();
@@ -35,6 +36,13 @@ const MyCoursesStack = () => (
   </Stack.Navigator>
 );
 
+// AI Assistant Stack
+const AIAssistantStack = () => (
+  <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Screen name="GPTChat" component={GPTChatScreen} />
+  </Stack.Navigator>
+);
+
 // Profile Stack
 const ProfileStack = () => (
   <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -58,6 +66,8 @@ const StudentStack = () => {
             iconName = focused
               ? "bookmark-multiple"
               : "bookmark-multiple-outline";
+          } else if (route.name === "AI Assistant") {
+            iconName = focused ? "robot" : "robot-outline";
           } else if (route.name === "Profile") {
             iconName = focused ? "account-circle" : "account-circle-outline";
           }
@@ -92,6 +102,7 @@ const StudentStack = () => {
       <Tab.Screen name="Home" component={HomeStack} />
       <Tab.Screen name="Explore" component={ExploreStack} />
       <Tab.Screen name="My Courses" component={MyCoursesStack} />
+      <Tab.Screen name="AI Assistant" component={AIAssistantStack} />
       <Tab.Screen name="Profile" component={ProfileStack} />
     </Tab.Navigator>
   );

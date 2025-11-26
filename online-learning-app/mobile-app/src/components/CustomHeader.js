@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   StatusBar,
 } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { AuthContext } from "../context/AuthContext";
 
@@ -39,13 +38,8 @@ const CustomHeader = ({
 
   return (
     <>
-      <StatusBar barStyle="light-content" backgroundColor="#0066CC" />
-      <LinearGradient
-        colors={["#007AFF", "#0066CC", "#0052A3"]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.gradient}
-      >
+      <StatusBar barStyle="dark-content" backgroundColor="#EBF5FB" />
+      <View style={styles.header}>
         <View style={styles.container}>
           {/* Top Row */}
           <View style={styles.topRow}>
@@ -59,7 +53,7 @@ const CustomHeader = ({
                 </Text>
               </TouchableOpacity>
               <View style={styles.greetingContainer}>
-                <Text style={styles.greeting}>{getGreeting()}</Text>
+                <Text style={styles.greeting}>{getGreeting()} 👋</Text>
                 <Text style={styles.userName}>
                   {user?.fullName || user?.username || "User"}
                 </Text>
@@ -69,7 +63,7 @@ const CustomHeader = ({
             <View style={styles.rightIcons}>
               {showNotification && (
                 <TouchableOpacity style={styles.iconButton}>
-                  <Icon name="bell-outline" size={24} color="#FFF" />
+                  <Icon name="bell-outline" size={24} color="#21618C" />
                   <View style={styles.badge}>
                     <Text style={styles.badgeText}>3</Text>
                   </View>
@@ -81,7 +75,7 @@ const CustomHeader = ({
           {/* Title Row */}
           {title && (
             <View style={styles.titleRow}>
-              <View>
+              <View style={styles.titleContainer}>
                 <Text style={styles.title}>{title}</Text>
                 {subtitle && <Text style={styles.subtitle}>{subtitle}</Text>}
               </View>
@@ -90,22 +84,25 @@ const CustomHeader = ({
                   style={styles.searchButton}
                   onPress={onSearchPress}
                 >
-                  <Icon name="magnify" size={22} color="#007AFF" />
+                  <Icon name="magnify" size={22} color="#21618C" />
                 </TouchableOpacity>
               )}
             </View>
           )}
         </View>
-      </LinearGradient>
+      </View>
     </>
   );
 };
 
 const styles = StyleSheet.create({
-  gradient: {
-    paddingTop: 40,
+  header: {
+    backgroundColor: "#EBF5FB", // Calm light blue
+    paddingTop: 45,
     paddingBottom: 20,
     paddingHorizontal: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: "#AED6F1",
   },
   container: {
     // Container styles
@@ -124,30 +121,30 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
-    backgroundColor: "rgba(255, 255, 255, 0.3)",
+    backgroundColor: "#D6EAF8", // Light blue for avatar
     justifyContent: "center",
     alignItems: "center",
     marginRight: 12,
     borderWidth: 2,
-    borderColor: "#FFF",
+    borderColor: "#5DADE2", // Medium blue border
   },
   avatarText: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#FFF",
+    color: "#21618C", // Dark blue text
   },
   greetingContainer: {
     justifyContent: "center",
   },
   greeting: {
     fontSize: 14,
-    color: "rgba(255, 255, 255, 0.9)",
+    color: "#5499C7", // Medium blue
     marginBottom: 2,
   },
   userName: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#FFF",
+    color: "#154360", // Navy blue
   },
   rightIcons: {
     flexDirection: "row",
@@ -156,7 +153,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    backgroundColor: "#D6EAF8", // Light blue
     justifyContent: "center",
     alignItems: "center",
     marginLeft: 10,
@@ -165,14 +162,14 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: -2,
     right: -2,
-    backgroundColor: "#FF3B30",
+    backgroundColor: "#FF6B6B",
     borderRadius: 10,
     minWidth: 18,
     height: 18,
     justifyContent: "center",
     alignItems: "center",
     borderWidth: 2,
-    borderColor: "#007AFF",
+    borderColor: "#EBF5FB",
   },
   badgeText: {
     color: "#FFF",
@@ -185,28 +182,28 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 10,
   },
+  titleContainer: {
+    flex: 1,
+  },
   title: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#FFF",
+    color: "#154360", // Navy blue
     marginBottom: 4,
   },
   subtitle: {
     fontSize: 14,
-    color: "rgba(255, 255, 255, 0.9)",
+    color: "#5499C7", // Medium blue
   },
   searchButton: {
     width: 45,
     height: 45,
     borderRadius: 22.5,
-    backgroundColor: "#FFF",
+    backgroundColor: "#D6EAF8", // Light blue
     justifyContent: "center",
     alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 4,
+    borderWidth: 1,
+    borderColor: "#AED6F1",
   },
 });
 
