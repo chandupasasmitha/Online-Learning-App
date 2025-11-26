@@ -6,31 +6,59 @@ import {
   TouchableOpacity,
   ScrollView,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import { AuthContext } from "../../context/AuthContext";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { MaterialCommunityIcons as Icon } from "@expo/vector-icons";
 
 const ProfileScreen = () => {
   const { user, logout } = useContext(AuthContext);
+  const [loggingOut, setLoggingOut] = React.useState(false);
 
   const handleLogout = () => {
     Alert.alert("Logout", "Are you sure you want to logout?", [
-      { text: "Cancel", style: "cancel" },
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
       {
         text: "Logout",
         style: "destructive",
-        onPress: logout,
+        onPress: async () => {
+          setLoggingOut(true);
+          const result = await logout();
+          setLoggingOut(false);
+
+          if (!result.success) {
+            Alert.alert("Error", "Failed to logout. Please try again.");
+          }
+          // Navigation will be handled automatically by MainNavigator
+        },
       },
     ]);
   };
 
-  const MenuItem = ({ icon, title, onPress, color = "#333" }) => (
+  const MenuItem = ({
+    icon,
+    title,
+    onPress,
+    color = "#333",
+    showChevron = true,
+  }) => (
     <TouchableOpacity style={styles.menuItem} onPress={onPress}>
       <Icon name={icon} size={24} color={color} />
       <Text style={[styles.menuText, { color }]}>{title}</Text>
-      <Icon name="chevron-right" size={24} color="#CCC" />
+      {showChevron && <Icon name="chevron-right" size={24} color="#CCC" />}
     </TouchableOpacity>
   );
+
+  if (!user) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#007AFF" />
+      </View>
+    );
+  }
 
   return (
     <ScrollView style={styles.container}>
@@ -38,11 +66,17 @@ const ProfileScreen = () => {
         <View style={styles.avatarContainer}>
           <Icon name="account-circle" size={100} color="#FFF" />
         </View>
-        <Text style={styles.name}>{user?.fullName || user?.username}</Text>
-        <Text style={styles.email}>{user?.email}</Text>
+        <Text style={styles.name}>{user.fullName || user.username}</Text>
+        <Text style={styles.email}>{user.email}</Text>
         <View style={styles.roleBadge}>
+          <Icon
+            name={user.role === "student" ? "school" : "teach"}
+            size={16}
+            color="#FFF"
+            style={styles.roleIcon}
+          />
           <Text style={styles.roleText}>
-            {user?.role === "student" ? "Student" : "Instructor"}
+            {user.role === "student" ? "Student" : "Instructor"}
           </Text>
         </View>
       </View>
@@ -107,16 +141,37 @@ const ProfileScreen = () => {
       </View>
 
       <View style={styles.section}>
-        <MenuItem
-          icon="logout"
-          title="Logout"
+        <TouchableOpacity
+          style={styles.logoutButton}
           onPress={handleLogout}
-          color="#FF3B30"
-        />
+          disabled={loggingOut}
+        >
+          {loggingOut ? (
+            <>
+              <ActivityIndicator
+                size="small"
+                color="#FF3B30"
+                style={styles.logoutIcon}
+              />
+              <Text style={styles.logoutText}>Logging out...</Text>
+            </>
+          ) : (
+            <>
+              <Icon
+                name="logout"
+                size={24}
+                color="#FF3B30"
+                style={styles.logoutIcon}
+              />
+              <Text style={styles.logoutText}>Logout</Text>
+            </>
+          )}
+        </TouchableOpacity>
       </View>
 
       <View style={styles.footer}>
         <Text style={styles.footerText}>Version 1.0.0</Text>
+        <Text style={styles.footerText}>Online Learning App</Text>
       </View>
     </ScrollView>
   );
@@ -125,6 +180,12 @@ const ProfileScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#F5F5F5",
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
     backgroundColor: "#F5F5F5",
   },
   header: {
@@ -149,10 +210,15 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   roleBadge: {
+    flexDirection: "row",
+    alignItems: "center",
     backgroundColor: "rgba(255,255,255,0.3)",
     paddingHorizontal: 15,
     paddingVertical: 6,
     borderRadius: 15,
+  },
+  roleIcon: {
+    marginRight: 5,
   },
   roleText: {
     color: "#FFF",
@@ -185,13 +251,30 @@ const styles = StyleSheet.create({
     marginLeft: 15,
     fontSize: 16,
   },
+  logoutButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 15,
+    paddingHorizontal: 20,
+    backgroundColor: "#FFF",
+  },
+  logoutIcon: {
+    marginRight: 15,
+  },
+  logoutText: {
+    fontSize: 16,
+    color: "#FF3B30",
+    fontWeight: "500",
+  },
   footer: {
     alignItems: "center",
     padding: 30,
+    paddingBottom: 50,
   },
   footerText: {
     fontSize: 12,
     color: "#999",
+    marginBottom: 5,
   },
 });
 

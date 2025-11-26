@@ -1,4 +1,3 @@
-// Authentication context
 import React, { createContext, useState, useEffect } from "react";
 import { authAPI } from "../api";
 import {
@@ -8,6 +7,7 @@ import {
   saveUser,
   getUser,
   removeUser,
+  clearAllStorage,
 } from "../utils/storage";
 
 export const AuthContext = createContext();
@@ -39,6 +39,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
+      console.log("🔐 Attempting login...");
       const response = await authAPI.login({ email, password });
       const { user, token } = response.data.data;
 
@@ -48,8 +49,10 @@ export const AuthProvider = ({ children }) => {
       setUser(user);
       setIsAuthenticated(true);
 
+      console.log("✅ Login successful:", user.email, user.role);
       return { success: true };
     } catch (error) {
+      console.error("❌ Login error:", error.response?.data || error.message);
       return {
         success: false,
         message: error.response?.data?.message || "Login failed",
@@ -59,6 +62,7 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (userData) => {
     try {
+      console.log("📝 Attempting registration...");
       const response = await authAPI.register(userData);
       const { user, token } = response.data.data;
 
@@ -68,8 +72,13 @@ export const AuthProvider = ({ children }) => {
       setUser(user);
       setIsAuthenticated(true);
 
+      console.log("✅ Registration successful:", user.email, user.role);
       return { success: true };
     } catch (error) {
+      console.error(
+        "❌ Registration error:",
+        error.response?.data || error.message
+      );
       return {
         success: false,
         message: error.response?.data?.message || "Registration failed",
@@ -79,12 +88,20 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      await removeToken();
-      await removeUser();
+      console.log("🚪 Logging out user:", user?.email);
+
+      // Clear all stored data
+      await clearAllStorage();
+
+      // Reset state
       setUser(null);
       setIsAuthenticated(false);
+
+      console.log("✅ Logout successful");
+      return { success: true };
     } catch (error) {
-      console.error("Logout error:", error);
+      console.error("❌ Logout error:", error);
+      return { success: false, message: "Logout failed" };
     }
   };
 

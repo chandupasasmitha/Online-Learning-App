@@ -3,7 +3,7 @@ import axios from "axios";
 import { getToken, removeToken } from "../utils/storage";
 
 // Configure your backend URL here
-const API_URL = "http://192.168.1.100:5000/api"; // Change to your local IP or deployed URL
+const API_URL = "http://192.168.157.219:5000/api";
 
 const api = axios.create({
   baseURL: API_URL,

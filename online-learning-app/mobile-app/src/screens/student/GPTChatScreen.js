@@ -12,7 +12,7 @@ import {
   Platform,
 } from "react-native";
 import { gptAPI } from "../../api";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { MaterialCommunityIcons as Icon } from "@expo/vector-icons";
 
 const GPTChatScreen = () => {
   const [prompt, setPrompt] = useState("");

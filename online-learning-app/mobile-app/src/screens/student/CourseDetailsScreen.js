@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { courseAPI, enrollmentAPI } from "../../api";
 import Button from "../../components/Button";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { MaterialCommunityIcons as Icon } from "@expo/vector-icons";
 
 const CourseDetailsScreen = ({ route, navigation }) => {
   const { courseId } = route.params;

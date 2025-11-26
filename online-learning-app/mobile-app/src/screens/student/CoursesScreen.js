@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { courseAPI } from "../../api";
 import CourseCard from "../../components/CourseCard";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { MaterialCommunityIcons as Icon } from "@expo/vector-icons";
 
 const CoursesScreen = ({ navigation }) => {
   const [courses, setCourses] = useState([]);

@@ -1,4 +1,3 @@
-// AsyncStorage helpers
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const TOKEN_KEY = "@auth_token";
@@ -54,5 +53,35 @@ export const removeUser = async () => {
     await AsyncStorage.removeItem(USER_KEY);
   } catch (error) {
     console.error("Error removing user:", error);
+  }
+};
+
+// Clear all storage
+export const clearAllStorage = async () => {
+  try {
+    await AsyncStorage.multiRemove([TOKEN_KEY, USER_KEY]);
+    console.log("✅ All storage cleared");
+  } catch (error) {
+    console.error("Error clearing storage:", error);
+  }
+};
+
+// Get all keys (for debugging)
+export const getAllKeys = async () => {
+  try {
+    return await AsyncStorage.getAllKeys();
+  } catch (error) {
+    console.error("Error getting all keys:", error);
+    return [];
+  }
+};
+
+// Clear everything (for debugging)
+export const clearEverything = async () => {
+  try {
+    await AsyncStorage.clear();
+    console.log("✅ Everything cleared");
+  } catch (error) {
+    console.error("Error clearing everything:", error);
   }
 };

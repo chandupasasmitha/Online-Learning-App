@@ -1,7 +1,7 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { MaterialCommunityIcons as Icon } from "@expo/vector-icons";
 
 import MyCoursesScreen from "../screens/instructor/MyCoursesScreen";
 import AddCourseScreen from "../screens/instructor/AddCourseScreen";
@@ -12,6 +12,7 @@ import ProfileScreen from "../screens/student/ProfileScreen";
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
+// Courses Stack with nested screens
 const CoursesStack = () => (
   <Stack.Navigator
     screenOptions={{
@@ -43,6 +44,24 @@ const CoursesStack = () => (
   </Stack.Navigator>
 );
 
+// Profile Stack
+const ProfileStack = () => (
+  <Stack.Navigator
+    screenOptions={{
+      headerStyle: { backgroundColor: "#007AFF" },
+      headerTintColor: "#fff",
+      headerTitleStyle: { fontWeight: "bold" },
+    }}
+  >
+    <Stack.Screen
+      name="ProfileScreen"
+      component={ProfileScreen}
+      options={{ title: "Profile" }}
+    />
+  </Stack.Navigator>
+);
+
+// Main Tab Navigator
 const InstructorStack = () => {
   return (
     <Tab.Navigator
@@ -61,10 +80,27 @@ const InstructorStack = () => {
         tabBarActiveTintColor: "#007AFF",
         tabBarInactiveTintColor: "gray",
         headerShown: false,
+        tabBarStyle: {
+          height: 60,
+          paddingBottom: 5,
+          paddingTop: 5,
+          backgroundColor: "#fff",
+          borderTopWidth: 1,
+          borderTopColor: "#e0e0e0",
+          elevation: 8,
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: -2 },
+          shadowOpacity: 0.1,
+          shadowRadius: 3,
+        },
+        tabBarLabelStyle: {
+          fontSize: 12,
+          fontWeight: "600",
+        },
       })}
     >
       <Tab.Screen name="My Courses" component={CoursesStack} />
-      <Tab.Screen name="Profile" component={ProfileScreen} />
+      <Tab.Screen name="Profile" component={ProfileStack} />
     </Tab.Navigator>
   );
 };
