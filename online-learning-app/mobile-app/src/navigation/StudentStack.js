@@ -1,7 +1,7 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { MaterialCommunityIcons as Icon } from "@expo/vector-icons";
 
 // Import screens
 import HomeScreen from "../screens/student/HomeScreen";
@@ -74,8 +74,8 @@ const StudentStack = () => {
 
           return <Icon name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor: "#007AFF",
-        tabBarInactiveTintColor: "#8E8E93",
+        tabBarActiveTintColor: "#7B68EE",
+        tabBarInactiveTintColor: "#999999",
         headerShown: false,
         tabBarStyle: {
           backgroundColor: "#FFFFFF",

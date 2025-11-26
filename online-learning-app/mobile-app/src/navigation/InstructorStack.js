@@ -1,7 +1,7 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { MaterialCommunityIcons as Icon } from "@expo/vector-icons";
 
 import InstructorHomeScreen from "../screens/instructor/InstructorHomeScreen";
 import MyCoursesScreen from "../screens/instructor/MyCoursesScreen";
@@ -48,20 +48,20 @@ const InstructorStack = () => {
           if (route.name === "Home") {
             iconName = focused ? "home" : "home-outline";
           } else if (route.name === "My Courses") {
-            iconName = focused ? "bookshelf" : "bookshelf-outline";
+            iconName = focused ? "book-multiple" : "book-multiple-outline";
           } else if (route.name === "Profile") {
             iconName = focused ? "account-circle" : "account-circle-outline";
           }
 
           return <Icon name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor: "#5DADE2",
-        tabBarInactiveTintColor: "#85C1E9",
+        tabBarActiveTintColor: "#7B68EE",
+        tabBarInactiveTintColor: "#999999",
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: "#EBF5FB",
+          backgroundColor: "#FFFFFF",
           borderTopWidth: 1,
-          borderTopColor: "#AED6F1",
+          borderTopColor: "#E0E0E0",
           paddingBottom: 8,
           paddingTop: 8,
           height: 65,
