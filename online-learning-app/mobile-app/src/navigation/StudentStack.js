@@ -74,8 +74,8 @@ const StudentStack = () => {
 
           return <Icon name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor: "#7B68EE",
-        tabBarInactiveTintColor: "#999999",
+        tabBarActiveTintColor: "#007AFF",
+        tabBarInactiveTintColor: "#8E8E93",
         headerShown: false,
         tabBarStyle: {
           backgroundColor: "#FFFFFF",

@@ -82,7 +82,6 @@ const AddCourseScreen = ({ navigation }) => {
             onChangeText={(value) => handleChange("description", value)}
             multiline
             numberOfLines={4}
-            style={styles.textArea}
           />
 
           <InputField
@@ -92,7 +91,6 @@ const AddCourseScreen = ({ navigation }) => {
             onChangeText={(value) => handleChange("content", value)}
             multiline
             numberOfLines={6}
-            style={styles.textArea}
           />
 
           <InputField
@@ -164,11 +162,6 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     padding: 20,
-  },
-  textArea: {
-    height: "auto",
-    minHeight: 100,
-    textAlignVertical: "top",
   },
   fieldContainer: {
     marginBottom: 15,

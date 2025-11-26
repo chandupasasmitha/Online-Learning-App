@@ -55,7 +55,7 @@ const InstructorStack = () => {
 
           return <Icon name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor: "#7B68EE",
+        tabBarActiveTintColor: "#007AFF",
         tabBarInactiveTintColor: "#999999",
         headerShown: false,
         tabBarStyle: {
