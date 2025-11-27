@@ -6,13 +6,26 @@ const { successResponse, errorResponse } = require("../utils/response");
 // @desc    Get course recommendations using GPT-3
 // @route   POST /api/gpt/recommendations
 // @access  Private
+// @note    LIMITED TO 250 TOTAL API REQUESTS - DO NOT CALL IN LOOPS
 exports.getCourseRecommendations = async (req, res) => {
+  const startTime = Date.now();
+
   try {
     const { prompt } = req.body;
 
     if (!prompt) {
+      console.warn(
+        `⚠️ GPT Recommendations: Empty prompt from user ${req.user.id}`
+      );
       return errorResponse(res, "Please provide a prompt", 400);
     }
+
+    console.log(`🤖 GPT Recommendations Request:`, {
+      userId: req.user.id,
+      promptLength: prompt.length,
+      timestamp: new Date().toISOString(),
+      remainingRequests: req.gptUsageInfo?.remaining || "unknown",
+    });
 
     // Get all available courses
     const courses = await Course.find({ isPublished: true })
@@ -37,7 +50,10 @@ User Request: ${prompt}
 
 Please recommend 3-5 most relevant courses from the list above. For each recommendation, explain why it's relevant. Format your response as a JSON array with objects containing: title, reason.`;
 
-    // Call OpenAI API
+    // Call OpenAI API - CRITICAL: This counts toward 250 request limit
+    console.log(`📡 Calling OpenAI API for course recommendations...`);
+    const apiCallStart = Date.now();
+
     const completion = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
       messages: [
@@ -55,7 +71,16 @@ Please recommend 3-5 most relevant courses from the list above. For each recomme
       max_tokens: 800,
     });
 
+    const apiCallDuration = Date.now() - apiCallStart;
     const gptResponse = completion.choices[0].message.content;
+    const tokensUsed = completion.usage?.total_tokens || 0;
+
+    console.log(`✅ OpenAI API Response Received:`, {
+      duration: `${apiCallDuration}ms`,
+      tokensUsed,
+      responseLength: gptResponse.length,
+      model: completion.model,
+    });
 
     // Try to parse JSON from GPT response
     let recommendations;
@@ -90,12 +115,32 @@ Please recommend 3-5 most relevant courses from the list above. For each recomme
       };
     });
 
+    const totalDuration = Date.now() - startTime;
+    console.log(`🎯 GPT Recommendations Success:`, {
+      recommendationsCount: recommendedCourses.length,
+      totalDuration: `${totalDuration}ms`,
+      tokensUsed,
+      userId: req.user.id,
+    });
+
     return successResponse(res, {
       recommendations: recommendedCourses,
       prompt: prompt,
+      tokensUsed, // Include token usage in response
+      meta: {
+        requestsRemaining: req.gptUsageInfo?.remaining || null,
+        totalRequests: req.gptUsageInfo?.totalRequests || null,
+      },
     });
   } catch (error) {
-    console.error("GPT recommendation error:", error);
+    const totalDuration = Date.now() - startTime;
+    console.error(`❌ GPT Recommendation Error:`, {
+      userId: req.user.id,
+      duration: `${totalDuration}ms`,
+      errorType: error.name,
+      errorMessage: error.message,
+      apiError: error.response?.data?.error?.message || "N/A",
+    });
 
     if (error.response) {
       return errorResponse(
@@ -112,13 +157,28 @@ Please recommend 3-5 most relevant courses from the list above. For each recomme
 // @desc    General chat with GPT about courses
 // @route   POST /api/gpt/chat
 // @access  Private
+// @note    LIMITED TO 250 TOTAL API REQUESTS - DO NOT CALL IN LOOPS
 exports.chatWithGPT = async (req, res) => {
+  const startTime = Date.now();
+
   try {
     const { message } = req.body;
 
     if (!message) {
+      console.warn(`⚠️ GPT Chat: Empty message from user ${req.user.id}`);
       return errorResponse(res, "Please provide a message", 400);
     }
+
+    console.log(`💬 GPT Chat Request:`, {
+      userId: req.user.id,
+      messageLength: message.length,
+      timestamp: new Date().toISOString(),
+      remainingRequests: req.gptUsageInfo?.remaining || "unknown",
+    });
+
+    // Call OpenAI API - CRITICAL: This counts toward 250 request limit
+    console.log(`📡 Calling OpenAI API for chat...`);
+    const apiCallStart = Date.now();
 
     const completion = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
@@ -137,14 +197,37 @@ exports.chatWithGPT = async (req, res) => {
       max_tokens: 500,
     });
 
+    const apiCallDuration = Date.now() - apiCallStart;
     const response = completion.choices[0].message.content;
+    const tokensUsed = completion.usage?.total_tokens || 0;
+
+    const totalDuration = Date.now() - startTime;
+    console.log(`✅ GPT Chat Success:`, {
+      duration: `${totalDuration}ms`,
+      apiCallDuration: `${apiCallDuration}ms`,
+      tokensUsed,
+      responseLength: response.length,
+      userId: req.user.id,
+    });
 
     return successResponse(res, {
       response,
       message,
+      tokensUsed, // Include token usage in response
+      meta: {
+        requestsRemaining: req.gptUsageInfo?.remaining || null,
+        totalRequests: req.gptUsageInfo?.totalRequests || null,
+      },
     });
   } catch (error) {
-    console.error("GPT chat error:", error);
+    const totalDuration = Date.now() - startTime;
+    console.error(`❌ GPT Chat Error:`, {
+      userId: req.user.id,
+      duration: `${totalDuration}ms`,
+      errorType: error.name,
+      errorMessage: error.message,
+      apiError: error.response?.data?.error?.message || "N/A",
+    });
 
     if (error.response) {
       return errorResponse(
