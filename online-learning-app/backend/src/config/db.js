@@ -1,16 +1,26 @@
 const mongoose = require("mongoose");
 
+let isConnected = false;
+
 const connectDB = async () => {
+  // Reuse existing connection in serverless
+  if (isConnected && mongoose.connection.readyState === 1) {
+    console.log("✅ Using existing MongoDB connection");
+    return;
+  }
+
   try {
-    // MongoDB connection options optimized for Atlas
+    // MongoDB connection options optimized for Atlas and Serverless
     const options = {
       useNewUrlParser: true,
       useUnifiedTopology: true,
-      serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
-      socketTimeoutMS: 45000, // Close sockets after 45s of inactivity
+      serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 45000,
+      maxPoolSize: 10, // Limit connection pool for serverless
     };
 
     const conn = await mongoose.connect(process.env.MONGO_URI, options);
+    isConnected = true;
 
     console.log(`✅ MongoDB Atlas Connected: ${conn.connection.host}`);
     console.log(`📊 Database: ${conn.connection.name}`);
@@ -22,29 +32,23 @@ const connectDB = async () => {
 
     mongoose.connection.on("error", (err) => {
       console.error("❌ Mongoose connection error:", err);
+      isConnected = false;
     });
 
     mongoose.connection.on("disconnected", () => {
       console.log("⚠️  Mongoose disconnected from MongoDB Atlas");
-    });
-
-    // Handle application termination
-    process.on("SIGINT", async () => {
-      await mongoose.connection.close();
-      console.log(
-        "🔴 Mongoose connection closed due to application termination"
-      );
-      process.exit(0);
+      isConnected = false;
     });
   } catch (error) {
     console.error(`❌ MongoDB Atlas Connection Error: ${error.message}`);
+    isConnected = false;
 
     // Provide helpful error messages
     if (error.message.includes("authentication failed")) {
       console.error("🔑 Check your database username and password");
     } else if (error.message.includes("IP")) {
       console.error(
-        "🌐 Check if your IP address is whitelisted in MongoDB Atlas"
+        "🌐 Check if your IP address is whitelisted in MongoDB Atlas (use 0.0.0.0/0 for Vercel)"
       );
     } else if (error.message.includes("ENOTFOUND")) {
       console.error(
@@ -52,7 +56,7 @@ const connectDB = async () => {
       );
     }
 
-    process.exit(1);
+    throw error; // Let serverless function handle the error
   }
 };
 
