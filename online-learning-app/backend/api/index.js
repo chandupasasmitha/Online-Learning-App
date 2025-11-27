@@ -12,7 +12,7 @@ module.exports = async (req, res) => {
     console.error("Serverless function error:", error);
     return res.status(500).json({
       status: "error",
-      message: "Internal server error"
+      message: "Internal server error",
     });
   }
 };
