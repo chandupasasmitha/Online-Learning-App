@@ -115,6 +115,7 @@ const styles = StyleSheet.create({
   },
   loginButton: {
     marginTop: 10,
+    backgroundColor: "#5DADE2",
   },
   registerLink: {
     marginTop: 20,
@@ -125,7 +126,7 @@ const styles = StyleSheet.create({
     color: "#666",
   },
   registerTextBold: {
-    color: "#007AFF",
+    color: "#5DADE2",
     fontWeight: "600",
   },
 });

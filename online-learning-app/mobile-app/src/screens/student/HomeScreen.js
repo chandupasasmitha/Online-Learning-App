@@ -218,7 +218,12 @@ const HomeScreen = ({ navigation }) => {
                   <TouchableOpacity
                     key={enrollment._id}
                     style={styles.courseCard}
-                    onPress={() => navigation.navigate("My Courses")}
+                    onPress={() =>
+                      navigation.navigate("Explore", {
+                        screen: "CourseDetails",
+                        params: { courseId: enrollment.course?._id },
+                      })
+                    }
                   >
                     <View style={styles.courseCardHeader}>
                       <View style={styles.courseThumbnail}>

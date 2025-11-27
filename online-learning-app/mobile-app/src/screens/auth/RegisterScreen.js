@@ -13,6 +13,7 @@ import {
 import { AuthContext } from "../../context/AuthContext";
 import InputField from "../../components/InputField";
 import Button from "../../components/Button";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 const RegisterScreen = ({ navigation }) => {
   const [formData, setFormData] = useState({
@@ -62,87 +63,112 @@ const RegisterScreen = ({ navigation }) => {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={styles.container}
     >
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        <View style={styles.header}>
-          <Text style={styles.title}>Create Account</Text>
-          <Text style={styles.subtitle}>Join our learning community</Text>
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Hero Section */}
+        <View style={styles.heroSection}>
+          <View style={styles.iconContainer}>
+            <Icon name="school" size={60} color="#FFF" />
+          </View>
+          <Text style={styles.welcomeText}>Welcome!</Text>
+          <Text style={styles.tagline}>Start your learning journey today</Text>
         </View>
 
-        <View style={styles.form}>
+        {/* Form Section */}
+        <View style={styles.formCard}>
           <InputField
-            label="Full Name *"
+            label="Full Name"
             placeholder="Enter your full name"
             value={formData.fullName}
             onChangeText={(value) => handleChange("fullName", value)}
+            icon="account"
           />
 
           <InputField
-            label="Username *"
+            label="Username"
             placeholder="Choose a username"
             value={formData.username}
             onChangeText={(value) => handleChange("username", value)}
             autoCapitalize="none"
+            icon="at"
           />
 
           <InputField
-            label="Email *"
+            label="Email"
             placeholder="Enter your email"
             value={formData.email}
             onChangeText={(value) => handleChange("email", value)}
             keyboardType="email-address"
             autoCapitalize="none"
+            icon="email"
           />
 
           <InputField
-            label="Password *"
-            placeholder="Create a password"
+            label="Password"
+            placeholder="Create a password (min 6 characters)"
             value={formData.password}
             onChangeText={(value) => handleChange("password", value)}
             secureTextEntry
+            icon="lock"
           />
 
           <InputField
-            label="Confirm Password *"
+            label="Confirm Password"
             placeholder="Re-enter your password"
             value={formData.confirmPassword}
             onChangeText={(value) => handleChange("confirmPassword", value)}
             secureTextEntry
+            icon="lock-check"
           />
 
-          <Text style={styles.roleLabel}>I am a:</Text>
+          <Text style={styles.roleLabel}>Select Your Role</Text>
           <View style={styles.roleContainer}>
             <TouchableOpacity
               style={[
-                styles.roleButton,
-                formData.role === "student" && styles.roleButtonActive,
+                styles.roleCard,
+                formData.role === "student" && styles.roleCardActive,
               ]}
               onPress={() => handleChange("role", "student")}
             >
+              <Icon
+                name="account"
+                size={32}
+                color={formData.role === "student" ? "#5DADE2" : "#999"}
+              />
               <Text
                 style={[
-                  styles.roleButtonText,
-                  formData.role === "student" && styles.roleButtonTextActive,
+                  styles.roleCardTitle,
+                  formData.role === "student" && styles.roleCardTitleActive,
                 ]}
               >
                 Student
               </Text>
+              <Text style={styles.roleCardSubtitle}>Learn & Grow</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               style={[
-                styles.roleButton,
-                formData.role === "instructor" && styles.roleButtonActive,
+                styles.roleCard,
+                formData.role === "instructor" && styles.roleCardActive,
               ]}
               onPress={() => handleChange("role", "instructor")}
             >
+              <Icon
+                name="teach"
+                size={32}
+                color={formData.role === "instructor" ? "#9D7CD8" : "#999"}
+              />
               <Text
                 style={[
-                  styles.roleButtonText,
-                  formData.role === "instructor" && styles.roleButtonTextActive,
+                  styles.roleCardTitle,
+                  formData.role === "instructor" && styles.roleCardTitleActive,
                 ]}
               >
                 Instructor
               </Text>
+              <Text style={styles.roleCardSubtitle}>Teach & Share</Text>
             </TouchableOpacity>
           </View>
 
@@ -171,77 +197,131 @@ const RegisterScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFF",
+    backgroundColor: "#F5F7FA",
   },
   scrollContent: {
     flexGrow: 1,
-    padding: 20,
   },
-  header: {
+  heroSection: {
+    backgroundColor: "#5DADE2",
+    paddingTop: 60,
+    paddingBottom: 40,
+    paddingHorizontal: 30,
     alignItems: "center",
-    marginBottom: 30,
-    marginTop: 20,
+    borderBottomLeftRadius: 30,
+    borderBottomRightRadius: 30,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 5,
   },
-  title: {
-    fontSize: 28,
+  iconContainer: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 20,
+    borderWidth: 3,
+    borderColor: "rgba(255, 255, 255, 0.3)",
+  },
+  welcomeText: {
+    fontSize: 32,
     fontWeight: "bold",
-    color: "#333",
+    color: "#FFF",
     marginBottom: 8,
   },
-  subtitle: {
+  tagline: {
     fontSize: 16,
-    color: "#666",
+    color: "rgba(255, 255, 255, 0.9)",
+    textAlign: "center",
   },
-  form: {
-    width: "100%",
+  formCard: {
+    backgroundColor: "#FFF",
+    marginTop: -20,
+    marginHorizontal: 20,
+    borderRadius: 20,
+    padding: 25,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 3,
+    marginBottom: 30,
+  },
+  formTitle: {
+    fontSize: 22,
+    fontWeight: "700",
+    color: "#333",
+    marginBottom: 20,
+    textAlign: "center",
   },
   roleLabel: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: "600",
     color: "#333",
-    marginBottom: 10,
+    marginBottom: 12,
+    marginTop: 5,
   },
   roleContainer: {
     flexDirection: "row",
-    marginBottom: 20,
+    marginBottom: 25,
+    gap: 12,
   },
-  roleButton: {
+  roleCard: {
     flex: 1,
-    paddingVertical: 12,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "#E0E0E0",
+    backgroundColor: "#F8F9FA",
+    paddingVertical: 20,
+    paddingHorizontal: 10,
+    borderRadius: 15,
     alignItems: "center",
-    marginHorizontal: 5,
-    backgroundColor: "#F5F5F5",
+    borderWidth: 2,
+    borderColor: "#E0E0E0",
   },
-  roleButtonActive: {
-    backgroundColor: "#007AFF",
-    borderColor: "#007AFF",
+  roleCardActive: {
+    backgroundColor: "#F0F8FF",
+    borderColor: "#5DADE2",
+    borderWidth: 2,
   },
-  roleButtonText: {
-    fontSize: 15,
-    fontWeight: "600",
+  roleCardTitle: {
+    fontSize: 16,
+    fontWeight: "700",
     color: "#666",
+    marginTop: 10,
+    marginBottom: 4,
   },
-  roleButtonTextActive: {
-    color: "#FFF",
+  roleCardTitleActive: {
+    color: "#333",
+  },
+  roleCardSubtitle: {
+    fontSize: 12,
+    color: "#999",
   },
   registerButton: {
     marginTop: 10,
+    backgroundColor: "#5DADE2",
+    paddingVertical: 15,
+    borderRadius: 12,
+    shadowColor: "#5DADE2",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4,
   },
   loginLink: {
     marginTop: 20,
-    marginBottom: 20,
+    marginBottom: 10,
     alignItems: "center",
   },
   loginText: {
-    fontSize: 14,
+    fontSize: 15,
     color: "#666",
   },
   loginTextBold: {
-    color: "#007AFF",
-    fontWeight: "600",
+    color: "#5DADE2",
+    fontWeight: "700",
   },
 });
 

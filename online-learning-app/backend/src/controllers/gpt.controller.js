@@ -48,7 +48,7 @@ ${courseList}
 
 User Request: ${prompt}
 
-Please recommend 3-5 most relevant courses from the list above. For each recommendation, explain why it's relevant. Format your response as a JSON array with objects containing: title, reason.`;
+Please recommend 3-9 most relevant courses from the list above. For each recommendation, explain why it's relevant. Format your response as a JSON array with objects containing: title, reason.`;
 
     // Call OpenAI API - CRITICAL: This counts toward 250 request limit
     console.log(`📡 Calling OpenAI API for course recommendations...`);
@@ -68,7 +68,7 @@ Please recommend 3-5 most relevant courses from the list above. For each recomme
         },
       ],
       temperature: 0.7,
-      max_tokens: 800,
+      max_tokens: 250,
     });
 
     const apiCallDuration = Date.now() - apiCallStart;

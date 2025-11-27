@@ -10,6 +10,7 @@ const {
   getAllLogs,
   getUserLogs,
   exportLogs,
+  testApiKey,
 } = require("../controllers/gpt-admin.controller");
 const { protect } = require("../middleware/auth.middleware");
 const { authorize } = require("../middleware/role.middleware");
@@ -19,6 +20,10 @@ const {
   rateLimitGptRequests,
   addUsageHeaders,
 } = require("../middleware/gpt-tracking.middleware");
+
+// Test endpoint - Check if API key is valid (does NOT count toward 250 limit)
+// No authentication required - use for testing
+router.get("/test-key", testApiKey);
 
 // Admin routes for monitoring API usage (No API limit check needed)
 router.get(

@@ -1,6 +1,7 @@
 // GPT Admin Controller - For viewing API usage statistics
 const GptUsage = require("../models/gpt-usage.model");
 const { successResponse, errorResponse } = require("../utils/response");
+const openai = require("../config/gpt");
 
 // @desc    Get GPT API usage statistics
 // @route   GET /api/gpt/admin/stats
@@ -229,5 +230,107 @@ exports.exportLogs = async (req, res) => {
   } catch (error) {
     console.error("Error exporting logs:", error);
     return errorResponse(res, error.message, 500);
+  }
+};
+
+// @desc    Test OpenAI API key validity (does NOT count toward 250 limit)
+// @route   GET /api/gpt/test-key
+// @access  Public or Private (optional authentication)
+exports.testApiKey = async (req, res) => {
+  try {
+    console.log("🔑 Testing OpenAI API Key...");
+
+    // Check if API key is configured
+    if (
+      !process.env.OPENAI_API_KEY ||
+      process.env.OPENAI_API_KEY === "your_openai_api_key_here" ||
+      process.env.OPENAI_API_KEY === "your_valid_api_key_here"
+    ) {
+      return errorResponse(
+        res,
+        "OpenAI API key is not configured. Please set OPENAI_API_KEY in .env file.",
+        400
+      );
+    }
+
+    // Get current usage stats
+    const totalRequests = await GptUsage.getTotalRequestCount();
+    const remaining = await GptUsage.getRemainingRequests(250);
+
+    // Make a minimal API call to test the key (uses very few tokens)
+    const startTime = Date.now();
+    const completion = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      messages: [
+        {
+          role: "user",
+          content: "Say 'OK' if you can read this.",
+        },
+      ],
+      max_tokens: 5,
+      temperature: 0,
+    });
+
+    const duration = Date.now() - startTime;
+    const response = completion.choices[0].message.content;
+
+    console.log("✅ API Key Test Successful:", {
+      duration: `${duration}ms`,
+      model: completion.model,
+      response,
+    });
+
+    return successResponse(res, {
+      status: "valid",
+      message: "OpenAI API key is working correctly!",
+      test: {
+        response,
+        model: completion.model,
+        duration: `${duration}ms`,
+      },
+      usage: {
+        totalRequests,
+        remaining,
+        maxRequests: 250,
+        percentageUsed: ((totalRequests / 250) * 100).toFixed(2) + "%",
+      },
+      note: "This test does NOT count toward your 250 request limit as it uses a separate endpoint.",
+    });
+  } catch (error) {
+    console.error("❌ API Key Test Failed:", {
+      errorType: error.name,
+      errorMessage: error.message,
+      statusCode: error.response?.status,
+    });
+
+    let errorMsg = "OpenAI API key test failed: ";
+    let statusCode = 500;
+
+    if (
+      error.message.includes("401") ||
+      error.message.includes("Incorrect API key")
+    ) {
+      errorMsg +=
+        "Invalid API key. Please check your OPENAI_API_KEY in .env file.";
+      statusCode = 401;
+    } else if (
+      error.message.includes("429") ||
+      error.message.includes("quota")
+    ) {
+      errorMsg +=
+        "API key is valid but has exceeded quota. Please add credits to your OpenAI account.";
+      statusCode = 429;
+    } else if (
+      error.message.includes("timeout") ||
+      error.message.includes("ECONNREFUSED")
+    ) {
+      errorMsg +=
+        "Cannot reach OpenAI servers. Check your internet connection.";
+      statusCode = 503;
+    } else {
+      errorMsg += error.message;
+    }
+
+    return errorResponse(res, errorMsg, statusCode);
   }
 };
