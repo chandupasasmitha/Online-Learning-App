@@ -98,8 +98,8 @@ const CustomHeader = ({
 const styles = StyleSheet.create({
   header: {
     backgroundColor: "#EBF5FB", // Calm light blue
-    paddingTop: 45,
-    paddingBottom: 20,
+    paddingTop: 35,
+    paddingBottom: 12,
     paddingHorizontal: 20,
     borderBottomWidth: 1,
     borderBottomColor: "#AED6F1",
@@ -111,25 +111,25 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 15,
+    marginBottom: 8,
   },
   userInfo: {
     flexDirection: "row",
     alignItems: "center",
   },
   avatar: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+    width: 42,
+    height: 42,
+    borderRadius: 21,
     backgroundColor: "#D6EAF8", // Light blue for avatar
     justifyContent: "center",
     alignItems: "center",
-    marginRight: 12,
+    marginRight: 10,
     borderWidth: 2,
     borderColor: "#5DADE2", // Medium blue border
   },
   avatarText: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: "bold",
     color: "#21618C", // Dark blue text
   },
@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   userName: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: "bold",
     color: "#154360", // Navy blue
   },
@@ -186,10 +186,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   title: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: "bold",
     color: "#154360", // Navy blue
-    marginBottom: 4,
+    marginBottom: 3,
   },
   subtitle: {
     fontSize: 14,

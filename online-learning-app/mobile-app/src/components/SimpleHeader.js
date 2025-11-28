@@ -38,8 +38,8 @@ const SimpleHeader = ({ title, onBackPress, rightIcon, onRightPress }) => {
 const styles = StyleSheet.create({
   header: {
     backgroundColor: "#EBF5FB", // Calm light blue
-    paddingTop: 45,
-    paddingBottom: 15,
+    paddingTop: 35,
+    paddingBottom: 10,
     borderBottomWidth: 1,
     borderBottomColor: "#AED6F1",
   },
