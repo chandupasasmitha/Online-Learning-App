@@ -70,7 +70,6 @@ export const enrollmentAPI = {
 export const gptAPI = {
   getCourseRecommendations: (prompt) =>
     api.post("/gpt/recommendations", { prompt }),
-  chatWithGPT: (message) => api.post("/gpt/chat", { message }),
 };
 
 export default api;

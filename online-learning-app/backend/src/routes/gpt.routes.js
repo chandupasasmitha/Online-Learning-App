@@ -1,10 +1,7 @@
 // GPT routes
 const express = require("express");
 const router = express.Router();
-const {
-  getCourseRecommendations,
-  chatWithGPT,
-} = require("../controllers/gpt.controller");
+const { getCourseRecommendations } = require("../controllers/gpt.controller");
 const {
   getUsageStats,
   getAllLogs,
@@ -65,16 +62,6 @@ router.post(
   addUsageHeaders,
   logApiRequest,
   getCourseRecommendations
-);
-
-router.post(
-  "/chat",
-  protect,
-  checkApiLimit,
-  rateLimitGptRequests,
-  addUsageHeaders,
-  logApiRequest,
-  chatWithGPT
 );
 
 module.exports = router;
