@@ -6,7 +6,6 @@ const { successResponse, errorResponse } = require("../utils/response");
 // @desc    Get course recommendations using GPT-3
 // @route   POST /api/gpt/recommendations
 // @access  Private
-// @note    LIMITED TO 250 TOTAL API REQUESTS - DO NOT CALL IN LOOPS
 exports.getCourseRecommendations = async (req, res) => {
   const startTime = Date.now();
 
@@ -48,7 +47,7 @@ ${courseList}
 
 User Request: ${prompt}
 
-Please recommend 3-9 most relevant courses from the list above. For each recommendation, explain why it's relevant. Format your response as a JSON array with objects containing: title, reason.`;
+Please recommend 3-5 most relevant courses from the list above. For each recommendation, explain why it's relevant. Format your response as a JSON array with objects containing: title, reason.`;
 
     // Call OpenAI API - CRITICAL: This counts toward 250 request limit
     console.log(`📡 Calling OpenAI API for course recommendations...`);

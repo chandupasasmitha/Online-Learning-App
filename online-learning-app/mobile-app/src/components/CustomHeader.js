@@ -64,9 +64,6 @@ const CustomHeader = ({
               {showNotification && (
                 <TouchableOpacity style={styles.iconButton}>
                   <Icon name="bell-outline" size={24} color="#21618C" />
-                  <View style={styles.badge}>
-                    <Text style={styles.badgeText}>3</Text>
-                  </View>
                 </TouchableOpacity>
               )}
             </View>
