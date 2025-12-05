@@ -3,7 +3,8 @@ import axios from "axios";
 import { getToken, removeToken } from "../utils/storage";
 
 // Configure your backend URL here
-const API_URL = "https://online-learning-app-0vcd.onrender.com/api";
+//
+const API_URL = "http://192.168.184.219:5000/api";
 
 const api = axios.create({
   baseURL: API_URL,
